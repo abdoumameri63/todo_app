@@ -37,18 +37,38 @@ val todolist=getFaketodo()
 
 }
 @Composable
-fun Todoitem(item: todoData)
-{
-    Row (modifier = Modifier.fillMaxWidth().background(Color.Blue).padding(5.dp)
-        .clip(RoundedCornerShape(20.dp)))
-    {
-        Column {
-        Text(text = SimpleDateFormat("HH:MM,AA,dd/mm").format(item.createAt),
-            fontSize =10.sp)
-        Text(text = item.title.toString(),
-            fontSize = 20.sp,
-            color = Color.DarkGray)
-        Text(text = item.id.toString())
+fun TodoItem(item: todoData) {
+
+    val date = java.util.Date.from(item.createAt)
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 6.dp),
+        shape = RoundedCornerShape(50.dp),
+        elevation = CardDefaults.cardElevation(6.dp)
+    ) {
+
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+        ) {
+
+            Text(
+                text = SimpleDateFormat(
+                    "hh:mm a, dd MMM",
+                    java.util.Locale.getDefault()
+                ).format(date),
+                fontSize = 12.sp,
+                color = Color.Gray
+            )
+
+            Text(
+                text = item.title,
+                fontSize = 20.sp,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+
         }
     }
 
