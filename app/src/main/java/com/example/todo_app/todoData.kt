@@ -17,13 +17,11 @@ fun getFaketodo(): List<todoData>
             createAt = Instant.now()
         ),
        todoData(id=2,
-           title = "the second project",
+           title = "the second project ",
            createAt = Instant.now()
        ),
        todoData(id=3,
            title="the third project",
            createAt= Instant.now()),
-
-
     )
 }
