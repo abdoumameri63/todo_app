@@ -1,27 +1,14 @@
 package com.example.todo_app
 
-import androidx.compose.runtime.Composable
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import java.time.Instant
 
-data class todoData(
-    var id: Int,
-    var title: String,
-    var createAt: Instant
+@Entity(tableName = "todo_items")
+data class TodoData(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    val title: String,
+    val createdAt: Instant,
+    val isCompleted: Boolean = false
 )
-
-fun getFaketodo(): List<todoData>
-{
-   return listOf<todoData>(
-        todoData(id = 1,
-            title = "first project",
-            createAt = Instant.now()
-        ),
-       todoData(id=2,
-           title = "the second project ",
-           createAt = Instant.now()
-       ),
-       todoData(id=3,
-           title="the third project",
-           createAt= Instant.now()),
-    )
-}

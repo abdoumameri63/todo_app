@@ -1,29 +1,48 @@
-package com.example.todo_app.ui.theme
+package com.example.todo_app
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import com.example.todo_app.todoData
-class TodoViewModel : ViewModel() {
+import androidx.lifecycle.viewModelScope
+import com.example.todo_app.MainApplication
+import com.example.todo_app.TodoData
+import com.example.todo_app.db.TodoDao
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.time.Instant
+import com.example.todo_app.ui.theme.Todo_appTheme
+class TodoViewModel(application: Application) : AndroidViewModel(application) {
 
-    private var _todolist = MutableLiveData<List<todoData>>()
-    val todolist: LiveData<List<todoData>> = _todolist
+    private val dao: TodoDao =
+        (application as MainApplication).database.todoDao()
 
-    init {
-        gettAll_Todo()
-    }
-
-    fun gettAll_Todo() {
-        _todolist.value = Todo_object.getAllToDo()
-    }
+    val todos: LiveData<List<TodoData>> = dao.getAllTodos()
 
     fun addTodo(title: String) {
-        Todo_object.addToDo(title)
-        gettAll_Todo()
+        val trimmed = title.trim()
+        if (trimmed.isBlank()) return
+        viewModelScope.launch(Dispatchers.IO) {
+            dao.insertTodo(
+                TodoData(title = trimmed, createdAt = Instant.now())
+            )
+        }
+    }
+
+    fun toggleComplete(todo: TodoData) {
+        viewModelScope.launch(Dispatchers.IO) {
+            dao.updateTodo(todo.copy(isCompleted = !todo.isCompleted))
+        }
     }
 
     fun deleteTodo(id: Int) {
-        Todo_object.deleteTodo(id)
-        gettAll_Todo()
+        viewModelScope.launch(Dispatchers.IO) {
+            dao.deleteTodoById(id)
+        }
+    }
+
+    fun clearCompleted() {
+        viewModelScope.launch(Dispatchers.IO) {
+            dao.deleteCompletedTodos()
+        }
     }
 }
